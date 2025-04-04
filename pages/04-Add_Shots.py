@@ -147,6 +147,11 @@ if hole_add:
                     if shot_type != 'GREEN':
                         putt_type = 'N/A'
                     cursor = conn.cursor()
+                    hole_add = str(hole_add)
+                    shot_number = int(shot_number)
+                    round_id = str(round_id)
+                    shot_type = str(shot_type)
+                    distance = int(distance)
                     cursor.execute(
                         sql=sql.insert_shot_sql(),
                         parameters=(
