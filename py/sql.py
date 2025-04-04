@@ -87,12 +87,32 @@ def insert_shot_sql():
 def read_shots_sql():
     sql = """
     SELECT ROUND_ID,
-           HOLE,
-           SHOT_TYPE,
-           DISTANCE,
-           CLUB,
-           PENALTY_STROKES,
-           MAKE
+                       HOLE,
+                       SHOT_NUMBER,
+                       SHOT_TYPE,
+                       DISTANCE,
+                       CLUB,
+                       PENALTY_STROKES,
+                       MISS_TYPE,
+                       PUTT_BREAK,
+                       MAKE
       FROM SHOTS
+    """
+    return sql
+
+def read_shots_round():
+    sql = """
+    SELECT ROUND_ID,
+                       HOLE,
+                       SHOT_NUMBER,
+                       SHOT_TYPE,
+                       DISTANCE,
+                       CLUB,
+                       PENALTY_STROKES,
+                       MISS_TYPE,
+                       PUTT_BREAK,
+                       MAKE
+      FROM SHOTS
+     WHERE ROUND_ID = ?
     """
     return sql
