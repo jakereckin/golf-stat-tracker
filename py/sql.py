@@ -80,3 +80,16 @@ def insert_shot_sql():
     VALUES (?, ?, ?, ?, ?)
     """
     return sql
+
+def read_shots_sql():
+    sql = """
+    SELECT ROUND_ID,
+           HOLE,
+           SHOT_TYPE,
+           DISTANCE,
+           CLUB,
+           PENALTY_STROKES,
+           MAKE
+      FROM SHOTS
+    """
+    return sql

@@ -75,11 +75,15 @@ hole_add = st.selectbox(
 if hole_add:
     hole_par = merged_round_info['PAR'].to_list()[0]
     hole_distance = merged_round_info['DISTANCE'].to_list()[0]
-    st.write(f'Hole {hole_add} Par: {hole_par}')
-    st.write(f'Hole {hole_add} Distance: {hole_distance}')
+    par, distance = st.columns(spec=2)
+    with par:
+        st.write(f'Hole {hole_add} Par: {hole_par}')
+    with distance:
+        st.write(f'Hole {hole_add} Distance: {hole_distance}')
     shot_type = st.selectbox(
         label='Shot Type',
         options=['TEE', 'FAIRWAY', 'ROUGH', 'SAND', 'RECOVERY', 'GREEN'],
+        placeholder='Choose Shot Type'
     )
     if shot_type:
         shot_number = st.number_input(
