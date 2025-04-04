@@ -82,46 +82,56 @@ if hole_add:
         options=['TEE', 'FAIRWAY', 'ROUGH', 'SAND', 'RECOVERY', 'GREEN'],
     )
     if shot_type:
-        dist_entry, club_entry = st.columns(spec=2)
-        with dist_entry:
-            distance = st.number_input(
-                label='Distance',
-                min_value=0,
-                max_value=hole_distance
-            )
-        with club_entry:
-            club = st.selectbox(
-                label='Club',
-                options=db_clubs['CLUB_NAME'].to_list()
-            )
-        penalty_entry, make_entry = st.columns(spec=2)
-        with penalty_entry:
-            penalty_strokes = st.number_input(
-                label='Penalty Strokes',
-                min_value=0,
-                max_value=2
-            )
-        with make_entry:
-            make = st.radio(
-                label='Make',
-                options=['Yes', 'No'],
-                horizontal=True
-            )
-        add = st.button(label='Add Shot')
-        if add:
-            with sqlitecloud.connect(sql_lite_connect) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    sql=sql.insert_shot_sql(),
-                    parameters=(
-                        round_id,
-                        hole_add,
-                        shot_type,
-                        distance,
-                        club,
-                        penalty_strokes,
-                        make
-                    )
+        shot_number = st.number_input(
+        label='Shot Number',
+        min_value=1,
+        max_value=20,
+        value=1
+        )
+        if shot_number:
+            dist_entry, club_entry = st.columns(spec=2)
+            with dist_entry:
+                init_value = 0
+                if shot_number == 1:
+                    init_value = hole_distance
+                distance = st.number_input(
+                    label='Distance',
+                    min_value=0,
+                    max_value=hole_distance + 100,
                 )
-                conn.commit()
-            st.write('Shot Added')
+            with club_entry:
+                club = st.selectbox(
+                    label='Club',
+                    options=db_clubs['CLUB_NAME'].to_list()
+                )
+            penalty_entry, make_entry = st.columns(spec=2)
+            with penalty_entry:
+                penalty_strokes = st.number_input(
+                    label='Penalty Strokes',
+                    min_value=0,
+                    max_value=2
+                )
+            with make_entry:
+                make = st.radio(
+                    label='Make',
+                    options=['Yes', 'No'],
+                    horizontal=True
+                )
+            add = st.button(label='Add Shot')
+            if add:
+                with sqlitecloud.connect(sql_lite_connect) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        sql=sql.insert_shot_sql(),
+                        parameters=(
+                            round_id,
+                            hole_add,
+                            shot_type,
+                            distance,
+                            club,
+                            penalty_strokes,
+                            make
+                        )
+                    )
+                    conn.commit()
+                st.write('Shot Added')
