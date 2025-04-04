@@ -108,8 +108,8 @@ if hole_add:
                     label='Club',
                     options=db_clubs['CLUB_NAME'].to_list()
                 )
-            penalty_entry, make_entry = st.columns(spec=2)
             miss_type, putt_type = st.columns(spec=2)
+            penalty_entry, make_entry = st.columns(spec=2)
             with miss_type:
                 miss_shot_types = ['RIGHT', 'LEFT', 'LONG', 'SHORT', 'HIT']
                 miss_shot = st.radio(
@@ -143,9 +143,9 @@ if hole_add:
                 )
             add = st.button(label='Add Shot')
             if add:
-                if shot_type != 'GREEN':
-                    putt_type = 'N/A'
                 with sqlitecloud.connect(sql_lite_connect) as conn:
+                    if shot_type != 'GREEN':
+                        putt_type = 'N/A'
                     cursor = conn.cursor()
                     cursor.execute(
                         sql=sql.insert_shot_sql(),
