@@ -80,7 +80,7 @@ def insert_shot_sql():
                        MISS_TYPE,
                        PUTT_BREAK,
                        MAKE)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     return sql
 
