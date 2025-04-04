@@ -114,8 +114,9 @@ if hole_add:
             with make_entry:
                 make = st.radio(
                     label='Make',
-                    options=['Yes', 'No'],
-                    horizontal=True
+                    options=['No', 'Yes'],
+                    horizontal=True, 
+
                 )
             add = st.button(label='Add Shot')
             if add:
