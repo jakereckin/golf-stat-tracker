@@ -152,6 +152,11 @@ if hole_add:
                     round_id = str(round_id)
                     shot_type = str(shot_type)
                     distance = int(distance)
+                    penalty_strokes = int(penalty_strokes)
+                    club = str(club)
+                    miss_type = str(miss_shot)
+                    putt_shot = str(putt_shot)
+                    make = str(make)
                     cursor.execute(
                         sql=sql.insert_shot_sql(),
                         parameters=(
