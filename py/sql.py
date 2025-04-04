@@ -72,12 +72,15 @@ def insert_shot_sql():
     sql = """
     INSERT INTO SHOTS (ROUND_ID,
                        HOLE,
+                       SHOT_NUMBER,
                        SHOT_TYPE,
                        DISTANCE,
                        CLUB,
                        PENALTY_STROKES,
+                       MISS_TYPE,
+                       PUTT_BREAK,
                        MAKE)
-    VALUES (?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     return sql
 
