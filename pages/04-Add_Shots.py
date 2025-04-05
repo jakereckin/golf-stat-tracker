@@ -99,7 +99,7 @@ if hole_add:
     shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
     st.write(merged_round_info)
     this_hole = merged_round_info.filter(
-        predicate=pl.col(name='HOLE').cast(pl.Int32) == hole_add
+        predicate=pl.col(name='HOLE').cast(pl.Int32) == int(hole_add)
     )
     hole_par = this_hole['PAR'].to_list()[0]
     hole_distance = this_hole['DISTANCE'].to_list()[0]
