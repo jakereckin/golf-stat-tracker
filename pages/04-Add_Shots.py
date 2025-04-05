@@ -65,6 +65,7 @@ def merge_round_info(this_round, db_holes):
     """
     return this_round.join(db_holes, on=['COURSE_NAME', 'TEE'], how='inner')
 
+@st.cache_data
 def get_shots_in_round(merged_round_info):
     """
     Retrieves the shots in a round.
@@ -228,3 +229,4 @@ if hole_add:
                 )
                 conn.commit()
             st.write('Shot Added')
+            st.rerun()
