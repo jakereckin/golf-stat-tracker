@@ -103,7 +103,7 @@ if hole_add:
     )
     hole_add = int(hole_add)
     this_hole = merged_round_info.filter(
-        predicate=pl.col(name='HOLE') == hole_add
+        pl.col(name='HOLE') == hole_add
     )
     hole_par = this_hole['PAR'].to_list()[0]
     hole_distance = this_hole['DISTANCE'].to_list()[0]
