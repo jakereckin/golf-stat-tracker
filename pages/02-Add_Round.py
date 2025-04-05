@@ -2,17 +2,16 @@ import streamlit as st
 import polars as pl
 import pandas as pd
 import sqlitecloud
-from py import sql
+from py import sql, data_source
 
 st.header(body='Add Round', divider='blue')
 sql_lite_connect = st.secrets['sqlite_connection']['GOLF_CONNECTION']
 
-with sqlitecloud.connect(sql_lite_connect) as conn:
-    db_courses = pd.read_sql(
-        sql=sql.get_courses_sql(),
-        con=conn
-    )
-    db_courses = pl.from_pandas(db_courses)
+db_courses = data_source.run_query(
+    sql=sql.get_courses_sql(),
+    connection=sql_lite_connect
+)
+db_courses = pl.from_pandas(db_courses)
 
 date = st.date_input(
     label='Date',

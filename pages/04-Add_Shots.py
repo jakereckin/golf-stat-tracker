@@ -2,21 +2,20 @@ import streamlit as st
 import polars as pl
 import pandas as pd
 import sqlitecloud
-from py import sql
+from py import sql, data_source
 
 st.header(body='Add Shot', divider='blue')
 sql_lite_connect = st.secrets['sqlite_connection']['GOLF_CONNECTION']
-with sqlitecloud.connect(sql_lite_connect) as conn:
-    db_rounds = pd.read_sql(
-        sql=sql.select_rouds_sql(),
-        con=conn
-    )
-    db_clubs = pd.read_sql(
-        sql=sql.select_clubs_sql(),
-        con=conn
-    )
-    db_rounds = pl.from_pandas(data=db_rounds)
-    db_clubs = pl.from_pandas(data=db_clubs)
+db_rounds = data_source.run_query(
+    sql=sql.select_rouds_sql(),
+    connection=sql_lite_connect
+)
+db_clubs = data_source.run_query(
+    sql=sql.select_clubs_sql(),
+    connection=sql_lite_connect
+)
+db_rounds = pl.from_pandas(data=db_rounds)
+db_clubs = pl.from_pandas(data=db_clubs)
 
 
 round_id = st.selectbox(
@@ -40,13 +39,12 @@ def get_round_info(db_rounds, round_id):
     this_round = db_rounds.filter(pl.col(name='ROUND_ID') == round_id)
     this_course = this_round['COURSE_NAME'].to_list()[0]
     this_tee = this_round['TEE'].to_list()[0]
-    with sqlitecloud.connect(sql_lite_connect) as conn:
-        db_holes = pd.read_sql(
-            sql=sql.select_holes_sql(),
-            con=conn,
-            params=(this_course, this_tee)
-        )
-        db_holes = pl.from_pandas(data=db_holes)
+    db_holes = data_source.run_query(
+        sql=sql.select_holes_sql(),
+        connection=sql_lite_connect,
+        params=(this_course, this_tee)
+    )
+    db_holes = pl.from_pandas(data=db_holes)
     return this_round, db_holes
 
 def merge_round_info(this_round, db_holes):
@@ -65,7 +63,7 @@ def merge_round_info(this_round, db_holes):
     """
     return this_round.join(db_holes, on=['COURSE_NAME', 'TEE'], how='inner')
 
-@st.cache_data
+
 def get_shots_in_round(merged_round_info):
     """
     Retrieves the shots in a round.
@@ -78,14 +76,14 @@ def get_shots_in_round(merged_round_info):
         DataFrame: A DataFrame containing the shots 
         in the round.
     """
-    with sqlitecloud.connect(sql_lite_connect) as conn:
-        shots_in_round = pd.read_sql(
-            sql=sql.read_shots_round(),
-            con=conn,
-            params=(merged_round_info['ROUND_ID'].to_list()[0],)
-        )
-        shots_in_round = pl.from_pandas(data=shots_in_round)
+    shots_in_round = data_source.run_query(
+        sql=sql.read_shots_sql(),
+        connection=sql_lite_connect,
+        params=(merged_round_info['ROUND_ID'].to_list()[0],)
+    )
+    shots_in_round = pl.from_pandas(data=shots_in_round)
     return shots_in_round
+
 
 this_round, db_holes = get_round_info(db_rounds=db_rounds, round_id=round_id)
 merged_round_info = merge_round_info(this_round=this_round, db_holes=db_holes)
@@ -93,13 +91,17 @@ shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
 
 hole_add = st.selectbox(
     label='Hole',
-    options=merged_round_info['HOLE'].to_list()
+    options=merged_round_info['HOLE'].to_list(),
+    placeholder='Select Hole',
+    index=None
 )
 if hole_add:
-    print(merged_round_info['ROUND_ID'].to_list()[0])
     shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
-    hole_par = merged_round_info['PAR'].to_list()[0]
-    hole_distance = merged_round_info['DISTANCE'].to_list()[0]
+    this_hole = merged_round_info.filter(
+        predicate=pl.col(name='HOLE') == hole_add
+    )
+    hole_par = this_hole['PAR'].to_list()[0]
+    hole_distance = this_hole['DISTANCE'].to_list()[0]
     par, distance = st.columns(spec=2)
     with par:
         st.write(f'Hole {hole_add} Par: {hole_par}')
@@ -159,9 +161,10 @@ if hole_add:
                     max_value=hole_distance + 100,
             )
         with club_entry:
-                club = st.selectbox(
+                club = st.radio(
                     label='Club',
-                    options=db_clubs['CLUB_NAME'].to_list()
+                    options=db_clubs['CLUB_NAME'].to_list(),
+                    horizontal=True
                 )
         miss_type, putt_type = st.columns(spec=2)
         penalty_entry, make_entry = st.columns(spec=2)
@@ -200,7 +203,7 @@ if hole_add:
         if add:
             with sqlitecloud.connect(sql_lite_connect) as conn:
                 if shot_type != 'GREEN':
-                        putt_type = 'N/A'
+                    putt_type = 'N/A'
                 cursor = conn.cursor()
                 hole_add = str(hole_add)
                 shot_number = int(shot_number)
