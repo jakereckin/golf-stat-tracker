@@ -97,6 +97,7 @@ hole_add = st.selectbox(
 )
 if hole_add:
     shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
+    st.write(merged_round_info)
     this_hole = merged_round_info.filter(
         predicate=pl.col(name='HOLE').cast(pl.Int32) == hole_add
     )
