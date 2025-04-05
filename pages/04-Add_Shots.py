@@ -123,7 +123,7 @@ if hole_add:
          max_shot = 1
     else:      
         hole_data = shots_in_round.filter(
-            pl.col(name='HOLE') == hole_add
+            pl.col(name='HOLE') == int(hole_add)
         )
         max_shot = hole_data['SHOT_NUMBER'].max()
         if max_shot is None:
@@ -131,7 +131,7 @@ if hole_add:
         else:
             max_shot += 1
         last_shot = shots_in_round.filter(
-            pl.col(name='HOLE') == hole_add
+            pl.col(name='HOLE') == int(hole_add)
         ).filter(
             pl.col(name='SHOT_NUMBER') == max_shot - 1
         )
