@@ -119,7 +119,7 @@ def read_shots_round():
 
 def read_expected_sql():
     sql = """
-    SELECT *
+    SELECT * 
     FROM STROKES_GAINED_EXPECTED
     """
     return sql
