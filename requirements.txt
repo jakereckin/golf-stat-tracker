@@ -1,4 +1,4 @@
 pandas==2.2.3
-polars==1.26.0
+polars==0.18.15
 sqlitecloud==0.0.83
 streamlit==1.44.1
