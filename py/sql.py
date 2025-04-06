@@ -116,3 +116,10 @@ def read_shots_round():
      WHERE ROUND_ID = ?
     """
     return sql
+
+def read_expected_sql():
+    sql = """
+    SELECT *
+    FROM STROKES_GAINED_EXPECTED
+    """
+    return sql
