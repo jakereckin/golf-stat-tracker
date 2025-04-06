@@ -101,7 +101,9 @@ if my_rounds:
     )
     total_expected = total_expected['START_EXPECTED'].sum()
     total_expected = np.round(total_expected, decimals=2)
-
-    st.metric(value=total_score, label='Total Shots Taken')
-    st.metric(value=total_expected, label='Total Expected Shots')
+    actual, expected = st.columns(2)
+    with actual:
+        st.metric(value=total_score, label='Total Shots Taken')
+    with expected:
+        st.metric(value=total_expected, label='Total Expected Shots')
     st.write(strokes_gained)
