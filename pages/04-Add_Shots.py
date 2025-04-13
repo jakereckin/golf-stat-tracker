@@ -104,6 +104,7 @@ if hole_add:
     this_hole = merged_round_info.filter(
         pl.col(name='HOLE') == hole_add
     )
+    st.write(shots_in_round)
     hole_par = this_hole['PAR'].to_list()[0]
     hole_distance = this_hole['DISTANCE'].to_list()[0]
     par, distance = st.columns(spec=2)
