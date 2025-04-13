@@ -108,15 +108,8 @@ if my_rounds:
         st.metric(value=total_expected, label='Total Expected Shots')
     st.write(strokes_gained)
 
-    strokes_gained_club = (
-        this_round.groupby(by=['CLUB'])
-                  .agg(
-                      STROKES_GAINED=pl.col(name='STROKES_GAINED').sum()
-                  )
-    )
-    st.write(strokes_gained_club)
     green_not = st.radio(
-        label='Putt v. Shot', options=['Putt', 'Full Shot'], horizontal=True
+        label='Putt v. Shot', options=['Putt', 'Full Shot', 'Club'], horizontal=True
     )
     if green_not == 'Putt':
 
@@ -151,7 +144,7 @@ if my_rounds:
                       .sort(by=['PUTTING_DISTANCE'], descending=False)
         )
         st.write(putting_distance)
-    else:
+    elif green_not == 'Full Shot':
 
         def _yard_distances(distance):
             if distance <= 40:
@@ -196,4 +189,13 @@ if my_rounds:
         )
         st.write(yardage)
 
-    
+    else:
+        strokes_gained_club = (
+        this_round.groupby(by=['CLUB'])
+                  .agg(
+                      STROKES_GAINED=pl.col(name='STROKES_GAINED').sum(),
+                      COUNT=pl.col(name='STROKES_GAINED').count()
+                  )
+                  .sort(by=['COUNT'], descending=True)
+        )
+        st.write(strokes_gained_club)
