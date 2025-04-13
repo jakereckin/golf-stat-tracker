@@ -60,7 +60,7 @@ def merge_round_info(this_round, db_holes):
     return this_round.join(db_holes, on=['COURSE_NAME', 'TEE'], how='inner')
 
 
-def get_shots_in_round(merged_round_info):
+def get_shots_in_round(merged_round_info, round_id):
     """
     Retrieves the shots in a round.
 
@@ -78,6 +78,9 @@ def get_shots_in_round(merged_round_info):
         params=(merged_round_info['ROUND_ID'].to_list()[0],)
     )
     shots_in_round = pl.from_pandas(data=shots_in_round)
+    shots_in_round = shots_in_round.filter(
+        pl.col(name='ROUND_ID') == round_id
+    )
     return shots_in_round
 
 round_id = st.selectbox(
@@ -92,8 +95,6 @@ if round_id:
     st.write(f'Round ID: {round_id}')
     this_round, db_holes = get_round_info(db_rounds=db_rounds, round_id=round_id)
     merged_round_info = merge_round_info(this_round=this_round, db_holes=db_holes)
-    shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
-    st.write(merged_round_info)
     hole_add = st.selectbox(
         label='Hole',
         options=merged_round_info['HOLE'].to_list(),
@@ -101,7 +102,7 @@ if round_id:
         index=None
     )
     if hole_add:
-        shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
+        shots_in_round = get_shots_in_round(merged_round_info=merged_round_info, round_id=round_id)
         merged_round_info = merged_round_info.with_columns(
             pl.col(name='HOLE').cast(pl.Int32)
         )
