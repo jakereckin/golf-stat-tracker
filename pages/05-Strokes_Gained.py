@@ -107,3 +107,93 @@ if my_rounds:
     with expected:
         st.metric(value=total_expected, label='Total Expected Shots')
     st.write(strokes_gained)
+
+    strokes_gained_club = (
+        this_round.groupby(by=['CLUB'])
+                  .agg(
+                      STROKES_GAINED=pl.col(name='STROKES_GAINED').sum()
+                  )
+    )
+    st.write(strokes_gained_club)
+    green_not = st.radio(
+        label='Putt v. Shot', options=['Putt', 'Full Shot'], horizontal=True
+    )
+    if green_not == 'Putt':
+
+        def _putting_distances(distance):
+            if distance <= 5:
+                return '(0) 0-5 Feet'
+            elif distance <= 10:
+                return '(1) 5-10 Feet'
+            elif distance <= 15:
+                return '(2) 10-15 Feet'
+            elif distance <= 20:
+                return '(3) 15-20 Feet'
+            elif distance <= 30:
+                return '(4) 20-30 Feet'
+            elif distance <= 50:
+                return '(5) 30-50 Feet'
+            else:
+                return '(6) 50+ Feet'
+
+        this_round = this_round.filter(
+            pl.col(name='SHOT_TYPE') == 'GREEN'
+        )
+        this_round = this_round.with_columns(
+            PUTTING_DISTANCE=pl.col(name='DISTANCE').apply(_putting_distances)
+        )
+        putting_distance = (
+            this_round.groupby(by=['PUTTING_DISTANCE'])
+                      .agg(
+                          STROKES_GAINED=pl.col(name='STROKES_GAINED').sum(),
+                          COUNT=pl.col(name='STROKES_GAINED').count()
+                      )
+                      .sort(by=['PUTTING_DISTANCE'], descending=False)
+        )
+        st.write(putting_distance)
+    else:
+
+        def _yard_distances(distance):
+            if distance <= 40:
+                return '(0) 0-40 Yards'
+            elif distance <= 60:
+                return '(1) 40-60 Yards'
+            elif distance <= 75:
+                return '(2) 60-75 Yards'
+            elif distance <= 100:
+                return '(3) 75-100 Yards'
+            elif distance <= 125:
+                return '(4) 100-125 Yards'
+            elif distance <= 150:
+                return '(5) 125-150 Yards'
+            elif distance <= 175:
+                return '(6) 150-175 Yards'
+            elif distance <= 200:
+                return '(7) 175-200 Yards'
+            elif distance <= 225:
+                return '(8) 200-225 Yards'
+            elif distance <= 250:
+                return '(9) 225-250 Yards'
+            elif distance <= 300:
+                return '(91) 250-300 Yards'
+            else:
+                return '(92) 300+ Yards'
+                
+
+        this_round = this_round.filter(
+            pl.col(name='SHOT_TYPE') != 'GREEN'
+        )
+        this_round = this_round.with_columns(
+            YARDAGE=pl.col(name='DISTANCE').apply(_yard_distances)
+        )
+        yardage = (
+            this_round.groupby(by=['YARDAGE'])
+                      .agg(
+                          STROKES_GAINED=pl.col(name='STROKES_GAINED').sum(),
+                          COUNT=pl.col(name='STROKES_GAINED').count()
+                      )
+                      .sort(by=['YARDAGE'], descending=False)
+        )
+        st.write(yardage)
+
+    
