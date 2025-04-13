@@ -44,14 +44,14 @@ def select_clubs_sql():
     return sql
 
 
-def select_rouds_sql():
+def select_rounds_sql():
     sql = """
     SELECT ROUND_ID,
            COURSE_NAME,
            TEE,
            DATE,
            TEE_TIME,
-           HOLES
+           HOLES 
       FROM ROUNDS
     """
     return sql
