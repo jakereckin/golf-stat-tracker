@@ -40,7 +40,7 @@ if holes:
         add = st.button(label='Add Course')
 
         if add:
-            with sqlitecloud.connect(connection_str=sql_lite_connect) as conn:
+            with sqlitecloud.connect(sql_lite_connect) as conn:
                 cursor = conn.cursor()
                 cursor.execute(sql=sql.create_course_sql())
                 for hole in holes_data:
