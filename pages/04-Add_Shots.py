@@ -93,6 +93,7 @@ if round_id:
     this_round, db_holes = get_round_info(db_rounds=db_rounds, round_id=round_id)
     merged_round_info = merge_round_info(this_round=this_round, db_holes=db_holes)
     shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
+    st.write(this_round)
     hole_add = st.selectbox(
         label='Hole',
         options=merged_round_info['HOLE'].to_list(),
@@ -108,7 +109,6 @@ if round_id:
         this_hole = merged_round_info.filter(
             pl.col(name='HOLE') == hole_add
         )
-        st.write(shots_in_round)
         hole_par = this_hole['PAR'].to_list()[0]
         hole_distance = this_hole['DISTANCE'].to_list()[0]
         par, distance = st.columns(spec=2)
