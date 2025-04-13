@@ -91,9 +91,6 @@ if my_rounds:
     this_round = db_shots_join.filter(
         pl.col(name='ROUND_ID') == my_rounds
     )
-    strokes_gained = this_round.groupby(by=['SHOT_TYPE']).agg(
-        pl.col(name='STROKES_GAINED').sum().alias(name='STROKES_GAINED')
-    )
     total_score = this_round['SHOT_NUMBER'].value_counts().sum()
     total_score = total_score['counts'].to_list()[0]
     total_expected = this_round.filter(
@@ -106,10 +103,11 @@ if my_rounds:
         st.metric(value=total_score, label='Total Shots Taken')
     with expected:
         st.metric(value=total_expected, label='Total Expected Shots')
-    st.write(strokes_gained)
 
     green_not = st.radio(
-        label='Putt v. Shot', options=['Putt', 'Full Shot', 'Club'], horizontal=True
+        label='Strokes Gained View',
+        options=['Putt', 'Full Shot', 'Club', 'Shot Type'],
+        horizontal=True
     )
     if green_not == 'Putt':
 
@@ -189,6 +187,16 @@ if my_rounds:
         )
         st.write(yardage)
 
+    elif green_not == 'Shot Type':
+        strokes_gained = (
+            this_round.groupby(by=['SHOT_TYPE'])
+                      .agg(
+                          STROKES_GAINED=pl.col(name='STROKES_GAINED').sum(),
+                          COUNT=pl.col(name='STROKES_GAINED').count()
+                      )
+                      .sort(by=['COUNT'], descending=True)
+        )
+        st.write(strokes_gained)
     else:
         strokes_gained_club = (
         this_round.groupby(by=['CLUB'])
