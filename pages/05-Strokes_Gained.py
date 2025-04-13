@@ -24,7 +24,7 @@ db_rounds = pl.from_pandas(data=db_rounds)
 db_shots = pl.from_pandas(data=db_shots)
 db_shots = db_shots.with_columns(
     db_shots.sort(['ROUND_ID', 'HOLE', 'SHOT_NUMBER'])
-            .groupby(['ROUND_ID', 'HOLE'])
+            .groupby(['ROUND_ID', 'HOLE']) 
             .apply(lambda df: df.with_columns(
                 pl.col(name='DISTANCE')
                   .shift(periods=-1)
