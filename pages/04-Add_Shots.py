@@ -18,12 +18,6 @@ db_rounds = pl.from_pandas(data=db_rounds)
 db_clubs = pl.from_pandas(data=db_clubs)
 
 
-round_id = st.selectbox(
-    label='Round ID',
-    options=db_rounds['ROUND_ID'].to_list(),
-    index=None,
-    placeholder='Select Round ID'
-)
 def get_round_info(db_rounds, round_id):
     """
     Retrieves the holes for a given round ID.
@@ -86,12 +80,18 @@ def get_shots_in_round(merged_round_info):
     shots_in_round = pl.from_pandas(data=shots_in_round)
     return shots_in_round
 
+round_id = st.selectbox(
+    label='Round ID',
+    options=db_rounds['ROUND_ID'].to_list(),
+    index=None,
+    placeholder='Select Round ID'
+)
 
-this_round, db_holes = get_round_info(db_rounds=db_rounds, round_id=round_id)
-merged_round_info = merge_round_info(this_round=this_round, db_holes=db_holes)
-shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
 
 if round_id:
+    this_round, db_holes = get_round_info(db_rounds=db_rounds, round_id=round_id)
+    merged_round_info = merge_round_info(this_round=this_round, db_holes=db_holes)
+    shots_in_round = get_shots_in_round(merged_round_info=merged_round_info)
     hole_add = st.selectbox(
         label='Hole',
         options=merged_round_info['HOLE'].to_list(),
