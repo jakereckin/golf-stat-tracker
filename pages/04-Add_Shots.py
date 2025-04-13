@@ -7,7 +7,7 @@ from py import sql, data_source
 st.header(body='Add Shot', divider='blue')
 sql_lite_connect = st.secrets['sqlite_connection']['GOLF_CONNECTION']
 db_rounds = data_source.run_query(
-    sql=sql.select_rouds_sql(),
+    sql=sql.select_rounds_sql(),
     connection=sql_lite_connect
 )
 db_clubs = data_source.run_query(

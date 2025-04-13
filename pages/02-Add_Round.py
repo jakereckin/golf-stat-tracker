@@ -25,10 +25,14 @@ course_name = st.selectbox(
     label='Course Name',
     options=db_courses['COURSE_NAME'].to_list()
 )
-tee = st.selectbox(
-    label='Tee',
-    options=db_courses['TEE'].to_list()
-)
+if course_name:
+    this_course = db_courses.filter(
+        pl.col(name='COURSE_NAME') == course_name
+    )
+    tee = st.selectbox(
+        label='Tee',
+        options=this_course['TEE'].to_list()
+    )
 holes = st.radio(
     label='Number of Holes',
     options=[9, 18],
