@@ -168,6 +168,7 @@ if round_id:
                         label='Distance',
                         min_value=0,
                         max_value=hole_distance + 100,
+                        value=init_value
                 )
             with club_entry:
                     club = st.radio(
