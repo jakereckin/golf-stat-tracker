@@ -137,7 +137,7 @@ strokes_saved_one = abs(strokes_saved_one)
 
 strokes_save_two = (
     baseline_expeted - option_two_expected
-).selet('EXPECTED').to_numpy()[0][0]
+).select('EXPECTED').to_numpy()[0][0]
 strokes_save_two = abs(strokes_save_two)
 
 if strokes_saved_one > strokes_save_two:
