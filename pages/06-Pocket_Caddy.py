@@ -132,18 +132,16 @@ with two_ex:
 strokes_saved_one = (
     baseline_expeted - option_one_expected
 ).select('EXPECTED').to_numpy()[0][0]
-strokes_saved_one = abs(strokes_saved_one)
 
 
 strokes_save_two = (
     baseline_expeted - option_two_expected
 ).select('EXPECTED').to_numpy()[0][0]
-strokes_save_two = abs(strokes_save_two)
 
-if strokes_saved_one > strokes_save_two:
-    breakeven_probability = (strokes_save_two / strokes_saved_one)
+if strokes_save_two > strokes_saved_one:
+    breakeven_probability = (strokes_save_two / (strokes_save_two + strokes_saved_one))
 else:
-    breakeven_probability = (strokes_saved_one / strokes_save_two)
+    breakeven_probability = (strokes_saved_one / (strokes_save_two + strokes_saved_one))
 
 st.metric(
     label='Sucess rate needed for aggressive option',
