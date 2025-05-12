@@ -80,6 +80,10 @@ db_shots_join = db_shots_join.with_columns(
 db_shots_join = db_shots_join.with_columns(
     STROKES_GAINED=(pl.col('START_EXPECTED')-pl.col('FINAL_EXPECTED') - 1)
 )
+db_shots_join = db_shots_join.with_columns(
+    STROKES_GAINED=pl.col('STROKES_GAINED')-pl.col('PENALTY_STROKES')
+)
+db_shots_join_copy = db_shots_join
 
 my_rounds = st.selectbox(
     label='Select Round',
@@ -91,8 +95,17 @@ if my_rounds:
     this_round = db_shots_join.filter(
         pl.col(name='ROUND_ID') == my_rounds
     )
-    total_score = this_round['SHOT_NUMBER'].value_counts().sum()
-    total_score = total_score['counts'].to_list()[0]
+    this_round = this_round.sort(
+        by=['STROKES_GAINED']
+    )
+    keep_worst = this_round.head(n=10)
+    keep_worst = keep_worst.select(
+        'HOLE', 'SHOT_NUMBER', 'DISTANCE', 'CLUB', 'STROKES_GAINED'
+    )
+    group_holes = this_round.groupby(by='HOLE').agg(
+        HOLE_SCORE=pl.col('SHOT_NUMBER').max()
+    )
+    total_score = group_holes['HOLE_SCORE'].sum()
     total_expected = this_round.filter(
         pl.col('SHOT_NUMBER') == 1
     )
@@ -207,3 +220,6 @@ if my_rounds:
                   .sort(by=['COUNT'], descending=True)
         )
         st.write(strokes_gained_club)
+
+    st.write('10 Worst Shots')
+    st.dataframe(keep_worst, use_container_width=True, hide_index=True)
