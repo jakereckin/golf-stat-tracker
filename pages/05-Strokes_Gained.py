@@ -222,4 +222,4 @@ if my_rounds:
         st.write(strokes_gained_club)
 
     st.write('10 Worst Shots')
-    st.dataframe(keep_worst, use_container_width=True, hide_index=True)
+    st.dataframe(data=keep_worst, use_container_width=True, hide_index=True)
